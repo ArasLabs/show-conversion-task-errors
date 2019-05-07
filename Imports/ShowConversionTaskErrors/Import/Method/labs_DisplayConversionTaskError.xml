@@ -1,0 +1,108 @@
+﻿<AML>
+ <Item type="Method" id="43AC27642D104F87BDDBC9A29B3E701B" action="add">
+  <execution_allowed_to keyed_name="Administrators" type="Identity">2618D6F5A90949BAA7E920D1B04C7EE1</execution_allowed_to>
+  <method_code><![CDATA[// Action intended to be run on a ConversionTask to display the error the caused it to fail in a readable dialog
+var task = this;
+
+// Check that this task has even failed before spending any time doing processing
+var taskStatus = task.getProperty("status");
+if (taskStatus !== "Failed" && taskStatus !== "Discarded")
+{
+    aras.AlertSuccess("Task has not failed. No error to display.");
+}
+
+// Get all of the data we need in one server call
+var aml = "<AML>" +
+          " <Item type='ConversionTaskEventHandler' action='get' select='event_type,status,id'>" +
+          "     <source_id>" + this.getID() + "</source_id>";
+          "     <Relationships>" +
+          "         <Item type='ConversionTaskHandlerError' action='get' select='error_message,attempt_number' />" +
+          "     </Relationships>" +
+          " </Item>";
+          "</AML>";
+var eventHandlers = aras.IomInnovator.applyAML(aml);
+
+// Get the ConversionTaskEventHandler relationships
+var eventHandlers = getOrFetchRelationships(task, "ConversionTaskEventHandler");
+if (eventHandlers.isEmpty() || eventHandlers.isError())
+{
+    task.fetchRelationships("ConversionTaskEventHandler");
+    eventHandlers = task.getRelationships("ConversionTaskEventHandler");
+}
+
+// TODO: Clean up the HTML generation
+
+// Print the event handlers in a readable format
+var printableHandlers = "";
+var firstError = "";
+var title = "<h1>Conversion Task Results</h1>";
+for (var i = 0; i < eventHandlers.getItemCount(); i++)
+{
+    var eventHandler = eventHandlers.getItemByIndex(i);
+    var handlerType = eventHandler.getProperty("event_type");
+    var handlerStatus = eventHandler.getProperty("status", "");
+
+    var handlerElement = "<h2>" + handlerType + " - " + handlerStatus + "</h2>";
+    printableHandlers += handlerElement;
+
+    if (handlerStatus === "Failed")
+    {
+        var errorMessages = getErrorMessagesFromEventHandler(eventHandler);
+        var errorMessagesTable = "<table><thead><tr><th>Attempt Number</th><th>Error Message</th></tr></thead><tbody>";
+        errorMessages.forEach(function (e) {
+            errorMessagesTable = errorMessagesTable + "<tr><td>" + e.number + "</td><td style='max-width: 50vw;text-overflow: ellipsis;overflow:hidden;white-space:nowrap;'>" + e.message + "</td></tr>";
+        });
+        var firstErrorMessage = errorMessages[0];
+        firstError = "<h2>Error " + firstErrorMessage.number + " from " + handlerType + "</h2><div style='white-space:pre-wrap;'>" + firstErrorMessage.message + "</div>";
+        errorMessagesTable = errorMessagesTable + "</tbody></table>";
+        printableHandlers += errorMessagesTable;
+    }
+}
+
+printableHandlers = title + firstError + printableHandlers;
+
+return printableHandlers;
+
+// Get relationships from an item, and fetch them if they don't exist
+function getOrFetchRelationships(parentItem, relationshipName)
+{
+    var rels = parentItem.getRelationships(relationshipName);
+    
+    if (rels.isEmpty() || rels.isError())
+    {
+        parentItem.fetchRelationships(relationshipName);
+        var rels = parentItem.getRelationships(relationshipName);
+    }
+
+    return rels;
+}
+
+function getErrorMessagesFromEventHandler(eventHandler)
+{
+    var handlerErrors = aras.IomInnovator.newItem("ConversionTaskHandlerError", "get");
+    handlerErrors.setProperty("source_id", eventHandler.getID());
+    handlerErrors.setAttribute("select", "error_message, attempt_number");
+    handlerErrors = handlerErrors.apply();
+    
+    var errorMessages = [];
+    for (var i = 0; i < handlerErrors.getItemCount(); i++)
+    {
+        var handlerError = handlerErrors.getItemByIndex(i);
+        var errorInfo = {
+            message : handlerError.getProperty("error_message"),
+            number : handlerError.getProperty("attempt_number")
+        }
+        errorMessages.push(errorInfo);
+    }
+
+    return errorMessages;
+}
+
+function buildViewFromEventHandlers(eventHandlers)
+{
+    
+}]]></method_code>
+  <method_type>JavaScript</method_type>
+  <name>labs_DisplayConversionTaskError</name>
+ </Item>
+</AML>

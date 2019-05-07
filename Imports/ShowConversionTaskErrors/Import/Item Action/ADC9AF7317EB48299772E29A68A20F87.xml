@@ -1,0 +1,21 @@
+﻿<AML>
+ <Item type="Item Action" id="ADC9AF7317EB48299772E29A68A20F87" action="add">
+  <related_id keyed_name="labs_ShowConversionError" type="Action">
+   <Item type="Action" id="09BE62EDCD214BCE8066C498E5A75471" action="add">
+    <item_query>&lt;Item type="{@type}" id="{@id}" levels= "1" action="get" /&gt;</item_query>
+    <label xml:lang="en">Show Conversion Error</label>
+    <location>client</location>
+    <method keyed_name="labs_DisplayConversionTaskError" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>labs_DisplayConversionTaskError</name>
+     </Item>
+    </method>
+    <target>one window</target>
+    <type>item</type>
+    <name>labs_ShowConversionError</name>
+   </Item>
+  </related_id>
+  <sort_order>128</sort_order>
+  <source_id keyed_name="ConversionTask" type="ItemType" name="ConversionTask">0300B828CBEE4610B77C41377209C900</source_id>
+ </Item>
+</AML>

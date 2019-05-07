@@ -1,0 +1,15 @@
+﻿<AML>
+ <Item type="Action" id="09BE62EDCD214BCE8066C498E5A75471" action="add">
+  <item_query>&lt;Item type="{@type}" id="{@id}" levels= "1" action="get" /&gt;</item_query>
+  <label xml:lang="en">Show Conversion Error</label>
+  <location>client</location>
+  <method keyed_name="labs_DisplayConversionTaskError" type="Method">
+   <Item type="Method" action="get" select="id">
+    <name>labs_DisplayConversionTaskError</name>
+   </Item>
+  </method>
+  <target>one window</target>
+  <type>item</type>
+  <name>labs_ShowConversionError</name>
+ </Item>
+</AML>

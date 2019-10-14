@@ -11,12 +11,14 @@ This project adds an Item Action to the Conversion Task ItemType that allows adm
 
 Release | Notes
 --------|--------
+[v2.0.0](https://github.com/ArasLabs/show-conversion-task-errors/releases/tag/v2.0.0) | Updated to 12.0
 [v1.0.0](https://github.com/ArasLabs/show-conversion-task-errors/releases/tag/v1.0.0) | Initial release
 
 #### Supported Aras Versions
 
 Project | Aras
 --------|------
+[v2.0.0](https://github.com/ArasLabs/show-conversion-task-errors/releases/tag/v2.0.0) | Updated to 12.0 SP1+
 [v1.0.0](https://github.com/ArasLabs/show-conversion-task-errors/releases/tag/v1.0.0) | 11.0 SP15, 11.0 SP12
 
 ## Installation
@@ -26,7 +28,7 @@ Project | Aras
 
 ### Pre-requisites
 
-1. Aras Innovator installed (version 11.0 SP12+ preferred)
+1. Aras Innovator installed (version 12.0 SPX preferred)
 2. Aras Package Import tool
 3. Show Conversion Task Errors import package
 
